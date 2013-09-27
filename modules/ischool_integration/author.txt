@@ -1,4 +1,4 @@
-ischool integrate - ischool 整合模組
+ischool integration - ischool 整合模組
 
 2013-09-21 -- Yaoming ( yaoming.huang@ischool.com.tw )
 ischool 黃耀明

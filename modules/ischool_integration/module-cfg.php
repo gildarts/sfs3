@@ -21,7 +21,7 @@
 
 // 資料表名稱定義
 
-//$MODULE_TABLE_NAME[0] = "ischool_config";
+$MODULE_TABLE_NAME[0] = "ischool_account";
 
 //---------------------------------------------------
 //
