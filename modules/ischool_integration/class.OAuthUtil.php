@@ -8,16 +8,16 @@ class OAuthUtil {
 	private $userInfo_url = "https://auth.ischool.com.tw/services/me2.php";	    
 
 	public function GetAccessToken($code) {
-		global $redirect_url,$client_id,$client_secret; //å¾ž config.php å®šè­°ã€‚
+		global $callback_url,$client_id,$client_secret; //±q config.php ©wÄ³¡C
 
 		$fields = array(
 			'grant_type'=>'authorization_code',
 			'code'=>$code,
 			'client_id'=>$client_id,
 			'client_secret'=>$client_secret,
-			'redirect_uri'=> $redirect_url
+			'redirect_uri'=> $callback_url
 		);
-    
+
 		//url-ify the data for the POST
 		$fields_string="" ;
 		foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
