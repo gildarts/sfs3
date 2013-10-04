@@ -1,4 +1,8 @@
 <?php
+/*
+ischool 整合模組設定頁面，提供帳號連結設定功能。
+*/
+
 require 'config.php';
 
 sfs_check();

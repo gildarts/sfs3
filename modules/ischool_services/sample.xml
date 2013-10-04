@@ -1,0 +1,31 @@
+<Service Enabled="true" Name="DelMultipleRecord">
+	<Definition Type="dbhelper">
+		<Action>Delete</Action>
+		<SQLTemplate>DELETE FROM $ischool.counsel.multiple_record WHERE @@Condition</SQLTemplate>
+		<RequestRecordElement>MultipleRecord</RequestRecordElement>
+		<Conditions Name="Condition" Required="True" Source="">
+			<Condition Comparer="in" EmptyReplacement="" InputConverter="" Quote="True" Required="True" Source="Key" SourceType="Request" Target="key" />
+			<Condition Quote="True" Required="True" Source="StudentID" SourceType="Variable" Target="ref_student_id" />
+		</Conditions>
+		<InternalVariable>
+			<Variable Key="StudentID" Name="StudentID" Source="UserInfo" />
+		</InternalVariable>
+		<Preprocesses>
+			<Preprocess InvalidMessage="已過開放填寫時間" Name="validDate" Type="validate"><![CDATA[
+				SELECT count(*)>0
+				FROM xpath_table('uid',
+				'content',
+				'$counsel.system_list',
+				'/Content/Item/@GradeYear|/Content/Item/@StartDateTime|/Content/Item/@EndDateTime',
+				'name=''ABCardAccessStartingDate''')
+				AS t(uid integer, "GradeYear" integer, "StartDateTime" character varying, "EndDateTime" character varying)
+				WHERE "GradeYear"= (
+				select c.grade_year From student s
+				join class c on c.id = s.ref_class_id
+				where s.id='@@StudentID'
+				)
+				and "StartDateTime"!='' and "EndDateTime"!='' and cast("StartDateTime" as timestamp)<=Now() and cast("EndDateTime" as timestamp)>=Now()
+				]]></Preprocess>
+			</Preprocesses>
+		</Definition>
+	</Service>

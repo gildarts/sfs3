@@ -1,6 +1,7 @@
 POST
-Array
+/sfs3/modules/ischool_integration/sms_callback.php?rn=xml?xml=hahahaha\nArray
 (
+    [rn] => xml?xml=hahahaha
     [arg1] => arg1_value
     [__utma] => 96992031.1324940066.1372759492.1375689765.1375696877.11
     [__utmz] => 96992031.1372759492.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)

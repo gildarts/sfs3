@@ -1,4 +1,7 @@
 <?php
+/*
+OAuth ªº Callback ­¶­±¡C
+*/
 
 require "sfs_login.php";
 
@@ -35,12 +38,15 @@ session_start();
 if (isset($_GET['code'])) { //oauth code¡C
 
 	$role = $_GET['role'];
-    
+	
 	$oauth_util = new OAuthUtil();
 	//======  1. Get Access Token  ===========		
-    	$code = $_GET['code'];  
+	$code = $_GET['code'];  
 	$token = $oauth_util->GetAccessToken($code);
 
+	var_dump($token);
+	exit();
+	
 	//========  2. Get User Info  ==================
 	$user = $oauth_util->GetUserInfo($token["access_token"]);
 	$userID = $user["userID"];
