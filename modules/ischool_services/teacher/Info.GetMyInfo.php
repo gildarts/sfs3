@@ -23,7 +23,7 @@ while(list($teacher_sn,$name,$sex,$email,$cell_phone) = $result -> FetchRow()){
 	echo "<ID>" . utf8($teacher_sn) . "</ID>";
 	echo "<Name>" . utf8($name) . "</Name>";
 	echo "<Gender>" . utf8($sex) . "</Gender>";
-	echo "<Nickname/>";
+	echo "<Nickname/>"; //沒有這個欄位。
 	echo "<Email>" . utf8($email) . "</Email>";
 	echo "<ContractPhone>" . utf8($cell_phone) . "</ContractPhone>";	
 }

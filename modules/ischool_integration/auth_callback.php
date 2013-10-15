@@ -44,8 +44,8 @@ if (isset($_GET['code'])) { //oauth code¡C
 	$code = $_GET['code'];  
 	$token = $oauth_util->GetAccessToken($code);
 
-	var_dump($token);
-	exit();
+	// var_dump($token);
+	// exit();
 	
 	//========  2. Get User Info  ==================
 	$user = $oauth_util->GetUserInfo($token["access_token"]);

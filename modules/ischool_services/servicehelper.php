@@ -14,8 +14,10 @@ function statement_error(){
 function check_auth(){
 	global $CONN;
 
-	if(!$CONN)
+	if(!$CONN) //檢查資料庫連線。
 		throw_error(ERR_NO_CONNECTION, 'no db connection.');
+
+	//檢查 AccessToken 是否已驗證。
 }
 
 //丟出一個錯誤訊息。
