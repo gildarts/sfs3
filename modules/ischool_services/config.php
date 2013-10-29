@@ -12,13 +12,4 @@ $callback_path = dirname($_SERVER['SCRIPT_NAME']).'/auth_callback.php?role=teach
 $callback_url =  "http" . ($_SERVER['HTTPS'] ? 's' : '') . "://{$_SERVER['HTTP_HOST']}{$callback_path}";
 $redirect_url = "https://auth.ischool.com.tw/oauth/authorize.php?client_id=$client_id&response_type=code&redirect_uri=".urlencode($callback_url);
 
-function let_support_bootstrap(){
-	echo "
-	<script src='js/bootstrap.js'></script>
-	<link rel='stylesheet' href='css/bootstrap.css'>";
-}
-
-function utf8($val){
-	return iconv('big5', 'utf-8',$val);
-}
 ?>
