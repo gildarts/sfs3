@@ -39,7 +39,6 @@ $xml=<<<EOD
   	<StudentCount>{$row[3]}</StudentCount>
   </Class>
 </ClassList>
-			
 EOD;
 }
 
