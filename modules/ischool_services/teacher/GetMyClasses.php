@@ -1,4 +1,4 @@
-<?
+<?php
 require_once '../config.php';
 require_once '../data_library.php'; //提供資料處理的相關函數。
 
