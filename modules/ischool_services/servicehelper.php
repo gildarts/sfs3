@@ -23,7 +23,7 @@ function check_auth(){
 //丟出一個錯誤訊息。
 function throw_error($code, $msg){
 	ob_clean();
-	echo "<Error><Code>{$code}</Code><Msg>{$msg}</Msg></Error>";
+	echo "<Error><Code>{$code}</Code><Msg>".utf8($msg)."</Msg></Error>";
 	end_service_output();
 	exit();
 }

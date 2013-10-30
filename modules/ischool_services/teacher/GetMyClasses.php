@@ -1,4 +1,4 @@
-<?
+<?php
 require_once '../config.php';
 require_once '../data_library.php'; //提供資料處理的相關函數。
 
@@ -15,13 +15,15 @@ $c_curr_seme = sprintf ("%03s%s", curr_year(), curr_seme());
 $class_name = teacher_sn_to_class_name($teacher_sn);
 $class_id = $class_name[2];
 
-$sql = 
+$sql =
 "select c.class_id, c.c_year, c.c_name ,count(*) studentcount from stud_base a
-inner join stud_seme b on a.student_sn=b.student_sn 
+inner join stud_seme b on a.student_sn=b.student_sn
 inner join school_class c on b.seme_year_seme=CONCAT(c.year,c.semester) and b.seme_class=CONCAT(c.c_year,c_name)
 inner join teacher_base d on c.teacher_1=d.name
 where c.enable=1 and (a.stud_study_cond=0 or a.stud_study_cond=5) and c.class_id='$class_id'
 group by class_id, c_year, c_name";
+
+
 
 $conn=mysql_connect($mysql_host,$mysql_user,$mysql_pass ) or die("mysql_connect() failed.");
 mysql_select_db($mysql_db,$conn) or die("mysql_select_db() failed.");
@@ -31,7 +33,7 @@ $result=mysql_query($sql,$conn);
 while($row = mysql_fetch_array ($result)){
 
     $class_full_name = class_id_to_full_class_name($row[0]);
-    
+
 $xml=<<<EOD
 <ClassList>
    <Class ClassID="{$row[0]}">
