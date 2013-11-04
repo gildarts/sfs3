@@ -1,15 +1,9 @@
 <?
 require_once '../config.php';
-require_once '../servicehelper.php'; //提供 Xml Service 的相關函數。
 
-header('Access-Control-Allow-Methods: POST, GET');
-header('Access-Control-Allow-Origin: *');
-header('Content-Type: text/xml; charset=utf-8');
-
-check_auth();
-
-begin_service_output(); //開始輸出資料。
+$ctx = init_context($_GET['access_token']);
 $c_curr_seme = sprintf ("%03s%s",curr_year(),curr_seme());
+
 $c_class_id="101_2_07_01";
 
 $sql = 
@@ -20,7 +14,7 @@ inner join school_class d on a.year=d.year and a.semester=d.semester and c.seme_
 where d.enable=1 and (b.stud_study_cond=0 or b.stud_study_cond=5) and c.seme_year_seme=$c_curr_seme and d.class_id='$c_class_id' 
 order by b.student_sn,b.stud_name,a.stud_id,c.seme_num";
 
-//echo $sql."<br/>";
+ //echo $sql."<br/>";
 
 $conn=mysql_connect($mysql_host,$mysql_user,$mysql_pass ) or die("mysql_connect() failed.");
 mysql_select_db($mysql_db,$conn) or die("mysql_select_db() failed.");

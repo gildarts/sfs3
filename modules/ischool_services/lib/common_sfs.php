@@ -1,14 +1,9 @@
 <?php
-require_once '../servicehelper.php'; //提供 Xml Service 的相關函數。
+require_once 'class.ConnectionInfo.php';
 
-function let_support_bootstrap(){
-	echo "
-	<script src='js/bootstrap.js'></script>
-	<link rel='stylesheet' href='css/bootstrap.css'>";
-}
-
-function utf8($val){
-	return iconv('big5', 'utf-8',$val);
+function get_sfs_connection_info(){
+    global $mysql_host, $mysql_user, $mysql_pass, $mysql_db;
+    return new ConnectionInfo($mysql_host, $mysql_db, $mysql_user, $mysql_pass);
 }
 
 function teacher_sn_to_class_name($teacher_sn){

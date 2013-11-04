@@ -1,4 +1,6 @@
 ischool integration - ischool 資料服務
 
 2013-10-03 -- Yaoming ( yaoming.huang@ischool.com.tw )
-ischool 黃耀明(Test)
+ischool 黃耀明
+
+要使用這個 Service，HTTP Header 需要使用「application/xml」，否則部份 Service 可能會不正常。

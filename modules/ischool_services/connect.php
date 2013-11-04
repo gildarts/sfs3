@@ -1,21 +1,23 @@
 <?php
-define('AUTH_USERINFO','https://auth.ischool.com.tw/services/me2.php');
-
 require_once ('config.php');
-require_once ('servicehelper.php');
-require_once ("../ischool_integration/class.HTTP.php");
 
-$access_token = $_GET['access_token'];
+$ctx = init_context($_GET['access_token']);
 
-$userinfo = GetUserInfo($access_token);
+$personal = ($ctx->GetUserInfo('teacher'));
 
-var_dump($userinfo);
+if($personal)
+	echo "<h6>{$personal['user_sn']}</h6>";
+else
+	echo "You aren't a valid user.";
 
-function GetUserInfo($token) {
-	$url = AUTH_USERINFO ."?access_token=$token&token_type=bearer";	    
+// $result = $ctx->Execute('select name from teacher_base limit 10');
 
-	$res = HTTP::Get($url);  
-	$user = json_decode($res, true);
-	return $user;
-}
+// echo '<root>';
+// while($row = $result->FetchNext()){
+//     echo "<h6>".utf8($row[0])."</h6>";
+// }
+
+// echo '</root>';
+
+close_context();
 ?>
