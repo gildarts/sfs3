@@ -1,6 +1,6 @@
 <?
-require_once '../config.php';
-require_once '../servicehelper.php'; //提供 Xml Service 的相關函數。
+require_once '../config_old.php';
+require_once '../servicehelper_old.php'; //提供 Xml Service 的相關函數。
 
 header('Access-Control-Allow-Methods: POST, GET');
 header('Access-Control-Allow-Origin: *');
