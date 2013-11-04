@@ -1,15 +1,15 @@
 <?php
 require_once '../config.php';
-require_once '../data_library.php'; //提供資料處理的相關函數。
 
-header('Access-Control-Allow-Methods: POST, GET');
-header('Access-Control-Allow-Origin: *');
-header('Content-Type: text/xml; charset=utf8');
+$ctx = init_context($_GET['access_token']);
 
-check_auth();
+$userinfo = $ctx->GetUserInfo('teacher');
 
-begin_service_output(); //開始輸出資料。
-$teacher_sn=$_SESSION['session_tea_sn'];
+if(!$userinfo) { //檢查如果使用者不存在。
+	throw_error(ERR_USER_DONOT_EXISTS, '使用者不存在，可能未進行帳號連結。');
+}
+
+$teacher_sn=$userinfo['user_sn'];
 $c_curr_seme = sprintf ("%03s%s", curr_year(), curr_seme());
 
 $class_name = teacher_sn_to_class_name($teacher_sn);
@@ -23,14 +23,8 @@ inner join teacher_base d on c.teacher_1=d.name
 where c.enable=1 and (a.stud_study_cond=0 or a.stud_study_cond=5) and c.class_id='$class_id'
 group by class_id, c_year, c_name";
 
-
-
-$conn=mysql_connect($mysql_host,$mysql_user,$mysql_pass ) or die("mysql_connect() failed.");
-mysql_select_db($mysql_db,$conn) or die("mysql_select_db() failed.");
-
-$result=mysql_query($sql,$conn);
-
-while($row = mysql_fetch_array ($result)){
+$result = $ctx->Execute($sql);
+while($row = $result->FetchNext()){
 
     $class_full_name = class_id_to_full_class_name($row[0]);
 

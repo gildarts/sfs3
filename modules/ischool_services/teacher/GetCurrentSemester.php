@@ -1,19 +1,11 @@
 <?php
 require_once '../config.php';
-require_once '../servicehelper.php'; //提供 Xml Service 的相關函數。
 
-header('Access-Control-Allow-Methods: POST, GET');
-header('Access-Control-Allow-Origin: *');
-header('Content-Type: text/xml; charset=utf-8');
-
-check_auth();
-
-
-begin_service_output(); //開始輸出資料。
+$ctx = init_context($_GET['access_token']);
 
 $SchoolYear=curr_year();
 $Semester=curr_seme();
-	
+
 $xml=<<<EOD
 <Current>
    <SchoolYear>$SchoolYear</SchoolYear>
@@ -22,5 +14,5 @@ $xml=<<<EOD
 EOD;
 $xml=utf8($xml);
 echo $xml;
-end_service_output(); //完成輸出。
+close_context(); //完成輸出。
 ?>
