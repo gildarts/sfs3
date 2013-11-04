@@ -16,7 +16,7 @@ $class_name = teacher_sn_to_class_name($teacher_sn);
 $class_id = $class_name[2];
 
 $sql =
-"select c.class_id, c.c_year, c.c_name ,count(*) studentcount from stud_base a
+"select c.class_id, c.c_year, c.c_name ,count(*) studentcount,d.teacher_sn from stud_base a
 inner join stud_seme b on a.student_sn=b.student_sn
 inner join school_class c on b.seme_year_seme=CONCAT(c.year,c.semester) and b.seme_class=CONCAT(c.c_year,c_name)
 inner join teacher_base d on c.teacher_1=d.name
