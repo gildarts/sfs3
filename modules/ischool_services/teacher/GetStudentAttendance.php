@@ -29,58 +29,71 @@ order by school_class.class_sn,stud_seme.seme_num,stud_absent.date,stud_absent.s
 
 $result = $ctx->Execute($sql);
 
+$rows = array();
+
+while($row = $result->FetchNext()){
+	array_push($rows, $row);
+}
+
 echo '<StudentAttendances>';
 $student_sn = '';
-$previous = '';
+$student_current = '';
+$occur_date_current = '';
 
-while($row = $result->FetchNext()){ //Loop Student
+for($i = 0; $i<count($rows);){ //Loop Student
+	$row = $rows[$i];
+
+	$student_sn = $row['student_sn'];
+	$occur_date = $row['date'];
+
 	echo "<Student>";	
-	
-	echo "<StudentID>{$row['student_sn']}</StudentID>";	 //student_sn 就是 ID 的意思，是流水號。
+	echo "<StudentID>{$student_sn}</StudentID>";	 //student_sn 就是 ID 的意思，是流水號。
 	echo utf8("<StudentName>{$row['stud_name']}</StudentName>");
 	echo "<StudentNumber>{$row['stud_id']}</StudentNumber>"; //這個是學號。
 	echo "<SeatNumber>{$row['seme_num']}</SeatNumber>";
 	echo utf8("<ClassName>{$row['class_name']}</ClassName>");
 	echo "<ClassID>{$row['class_id']}</ClassID>";
 
-	echo '<DetailsList>';
-	$occur_date_previous = '';
-	while($row = $result->FetchNext()){ //Loop Occur Date
+	echo '<DetailsList>'; //DetailList Begin
+
+	$student_current = $student_sn;
+	for(; $i<=count($rows);){
+		$row = $rows[$i];
+
 		$student_sn = $row['student_sn'];
 		$occur_date = $row['date'];
 
-		if($previous == '')
-			$previous = $student_sn;
+		if($student_current != $student_sn){
+			break;
+		}
 
-		echo "<Detail OccurDate='{$occur_date}' SchoolYear='{$curr_year}' Semester='{$curr_seme}'>";
-		while($row = $result->FetchNext()){ //Loop Detail (Period)
-			$occur_date = $row['date'];
+		echo "<Detail OccurDate='{$occur_date}' SchoolYear='{$curr_year}' Semester='{$curr_seme}' i='$i' t='$t'>";
+
+		$occur_date_current = $occur_date;
+		for(; $i<=count($rows);){
+			$row = $rows[$i];
+
+			$student_sn = $row['student_sn'];
+			$occur_date = $row['date'];			
 			$absence_type = utf8($row['absent_kind']);
 			$period = utf8($row['section']);
 
-			if($occur_date_previous =='')
-				$occur_date_previous = $occur_date;
-
-			if($period == 'uf' || $period == 'df')
-				$AttendanceType = utf8('集會');
-			else
-				$AttendanceType = utf8('一般');
-
-			echo "<Period AbsenceType='{$absence_type}' AttendanceType='{$AttendanceType}'>{$period}</Period>";	
-
-			if($occur_date_previous != $occur_date){
-				$occur_date_previous = $occur_date;
+			if($student_current != $student_sn){
 				break;
 			}
-		}
-		echo "</Detail>";
 
-		if($student_sn != $previous){
-			$previous = $student_sn;
-			break;
+			if($occur_date_current != $occur_date){
+				break;
+			}
+
+			echo "<Period AbsenceType='$absence_type' AttendanceType='' i='$i' t='$t' x='$x'>{$period}</Period>";
+			$i++; //關鍵加一格。
 		}
+
+		echo "</Detail>";
 	}
-	echo '</DetailsList>';
+
+	echo '</DetailsList>'; //DetailList End
 	echo "</Student>";
 }
 echo '</StudentAttendances>';
