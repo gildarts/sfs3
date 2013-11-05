@@ -3,6 +3,8 @@ require_once '../config.php';
 
 $ctx = init_context($_GET['access_token']);
 
+header('Content-Type: text/xml; charset=big5');
+
 $field_name = 'stud_name';
 $field_gender = 'stud_sex';
 $field_key = 'student_sn';
@@ -37,7 +39,7 @@ for($i=0; $i<count($rows);$i++){
 	$row = $rows[$i];
 	$row_exchange = $rows[$rnd];
 
-	//ец┤л Row
+	//Row
 	$rows[$i] = $row_exchange;
 	$rows[$rnd] = $row;
 }
@@ -56,6 +58,19 @@ close_context();
 function print_comand($rows, $tag_name){
 	global $field_name, $field_gender, $field_key, $table, $ctx;
 
+	for($i=0; $i<count($rows);$i++){
+		$row = $rows[$i];
+
+		$name = ($row[$field_name]);
+		$gender = $row[$field_gender];
+		$key = $row[$field_key];
+
+		$cmd = "update $table set $field_name='{$name}',$field_gender='{$gender}' where $field_key='{$key}';";
+		echo "<$tag_name gender='{$gender}' key='{$key}'><![CDATA[".$cmd."]]></$tag_name>";
+
+		//$ctx->Execute($cmd);
+	}
+
 	// for($i=0; $i<count($rows);$i++){
 	// 	$row = $rows[$i];
 
@@ -63,21 +78,8 @@ function print_comand($rows, $tag_name){
 	// 	$gender = $row[$field_gender];
 	// 	$key = $row[$field_key];
 
-	// 	$cmd = "update $table set $field_name='{$name}',$field_gender='{$gender}' where $field_key='{$key}';";
-	// 	echo "<$tag_name gender='{$gender}' key='{$key}'>".$cmd."</$tag_name>";
-
-	// 	//$ctx->Execute($cmd);
+	// 	echo "update $table set $field_name='{$name}',$field_gender='{$gender}' where $field_key='{$key}';\n";
 	// }
-
-	for($i=0; $i<count($rows);$i++){
-		$row = $rows[$i];
-
-		$name = utf8($row[$field_name]);
-		$gender = $row[$field_gender];
-		$key = $row[$field_key];
-
-		echo "update $table set $field_name='{$name}',$field_gender='{$gender}' where $field_key='{$key}';\n";
-	}
 }
 
 function random_string($str, $gender){
