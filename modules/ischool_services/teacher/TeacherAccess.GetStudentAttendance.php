@@ -1,9 +1,15 @@
 <?
-require_once '../config.php';
+require_once '../config_old.php';
+require_once '../servicehelper_old.php'; //提供 Xml Service 的相關函數。
 
-$ctx = init_context($_GET['access_token']);
+header('Access-Control-Allow-Methods: POST, GET');
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: text/xml; charset=utf-8');
+
+check_auth();
+
+begin_service_output(); //開始輸出資料。
 $c_curr_seme = sprintf ("%03s%s",curr_year(),curr_seme());
-
 $c_class_id="101_2_07_01";
 
 $sql = 
@@ -14,7 +20,7 @@ inner join school_class d on a.year=d.year and a.semester=d.semester and c.seme_
 where d.enable=1 and (b.stud_study_cond=0 or b.stud_study_cond=5) and c.seme_year_seme=$c_curr_seme and d.class_id='$c_class_id' 
 order by b.student_sn,b.stud_name,a.stud_id,c.seme_num";
 
- //echo $sql."<br/>";
+//echo $sql."<br/>";
 
 $conn=mysql_connect($mysql_host,$mysql_user,$mysql_pass ) or die("mysql_connect() failed.");
 mysql_select_db($mysql_db,$conn) or die("mysql_select_db() failed.");
@@ -43,6 +49,7 @@ where d.enable=1 and (b.stud_study_cond=0 or b.stud_study_cond=5) and c.seme_yea
 and b.student_sn={$row[0]} order by a.date";
 
 $result2=mysql_query($sql2,$conn);
+
 while($row2 = mysql_fetch_array ($result2)){
 $xml.=<<<EOD
 			<Detail OccurDate="{$row2[0]}" SchoolYear="{$row2[1]}" Semester="{$row2[2]}">
@@ -56,7 +63,9 @@ EOD;
 	and b.student_sn={$row[0]} and a.date='{$row2[0]}' order by a.section";	
 
 $result3=mysql_query($sql3,$conn);
+
 while($row3 = mysql_fetch_array ($result3)){
+
 $xml.=<<<EOD
 		<Period AbsenceType="{$row3[0]}" AttendanceType="{$row3[1]}">{$row3[2]}</Period>
 EOD;
