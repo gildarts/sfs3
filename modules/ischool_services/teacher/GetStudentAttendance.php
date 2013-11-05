@@ -9,9 +9,22 @@ $request = simplexml_load_string($HTTP_RAW_POST_DATA);
 if(!$request)
 	throw_error(ERR_REQUEST_INVALID,'Request format invalid.<![CDATA['.$HTTP_RAW_POST_DATA.']]>');
 
-$curr_semester = sprintf ("%03s%s",curr_year(),curr_seme()); //101,2 -> 1012
+$userinfo = $ctx->GetUserInfo('teacher');
+
+if(!$userinfo) { //檢查如果使用者不存在。
+	throw_error(ERR_USER_DONOT_EXISTS, '使用者不存在，可能未進行帳號連結。');
+}
+
 $curr_year = curr_year();
 $curr_seme = curr_seme();
+
+if($request->Condition->SchoolYear)
+	$curr_year = $request->Condition->SchoolYear;
+
+if($request->Condition->SchoolYear)
+	$curr_seme = $request->Condition->Semester;
+
+$curr_semester = sprintf ("%03s%s",$curr_year,$curr_seme); //101,2 -> 1012
 
 $class_id=$request->Condition->ClassID;//101_2_07_01
 
@@ -48,7 +61,9 @@ for($i = 0; $i<count($rows);){ //Loop Student
 
 	echo "<Student>";	
 	echo "<StudentID>{$student_sn}</StudentID>";	 //student_sn 就是 ID 的意思，是流水號。
-	echo utf8("<StudentName>{$row['stud_name']}</StudentName>");
+	echo "<StudentName>";
+	echo utf8($row['stud_name']);
+	echo "</StudentName>";
 	echo "<StudentNumber>{$row['stud_id']}</StudentNumber>"; //這個是學號。
 	echo "<SeatNumber>{$row['seme_num']}</SeatNumber>";
 	echo utf8("<ClassName>{$row['class_name']}</ClassName>");

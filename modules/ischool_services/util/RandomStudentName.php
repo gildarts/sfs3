@@ -12,6 +12,7 @@ $table = 'stud_base';
 
 $sql = "select $field_name, $field_gender, $field_key from $table";
 
+$result = $ctx->Execute("SET NAMES 'latin1'");
 $result = $ctx->Execute($sql);
 
 $rows = array();
@@ -33,7 +34,7 @@ for($i=0; $i<count($rows); $i++){
 }
 
 echo '<Commands>';
-//print_comand($rows,'Origin');
+// print_comand($rows,'Origin');
 for($i=0; $i<count($rows);$i++){
 	$rnd = rand($i,count($rows)-1);
 	$row = $rows[$i];
@@ -58,6 +59,19 @@ close_context();
 function print_comand($rows, $tag_name){
 	global $field_name, $field_gender, $field_key, $table, $ctx;
 
+	// for($i=0; $i<count($rows);$i++){
+	// 	$row = $rows[$i];
+
+	// 	$name = ($row[$field_name]);
+	// 	$gender = $row[$field_gender];
+	// 	$key = $row[$field_key];
+
+	// 	$cmd = "update $table set $field_name='{$name}',$field_gender='{$gender}' where $field_key='{$key}';";
+	// 	echo "<$tag_name gender='{$gender}' key='{$key}'><![CDATA[".$cmd."]]></$tag_name>";
+
+	// 	//$ctx->Execute($cmd);
+	// }
+
 	for($i=0; $i<count($rows);$i++){
 		$row = $rows[$i];
 
@@ -65,21 +79,8 @@ function print_comand($rows, $tag_name){
 		$gender = $row[$field_gender];
 		$key = $row[$field_key];
 
-		$cmd = "update $table set $field_name='{$name}',$field_gender='{$gender}' where $field_key='{$key}';";
-		echo "<$tag_name gender='{$gender}' key='{$key}'><![CDATA[".$cmd."]]></$tag_name>";
-
-		//$ctx->Execute($cmd);
+		echo "update $table set $field_name='{$name}',$field_gender='{$gender}' where $field_key='{$key}';\n";
 	}
-
-	// for($i=0; $i<count($rows);$i++){
-	// 	$row = $rows[$i];
-
-	// 	$name = utf8($row[$field_name]);
-	// 	$gender = $row[$field_gender];
-	// 	$key = $row[$field_key];
-
-	// 	echo "update $table set $field_name='{$name}',$field_gender='{$gender}' where $field_key='{$key}';\n";
-	// }
 }
 
 function random_string($str, $gender){
@@ -91,10 +92,9 @@ function random_string($str, $gender){
 	else
 		$newname = $female[rand(0,count($female)-1)];
 
-	$result = mb_substr($str,0,1).mb_substr($newname,1,strlen($newname)-1);
-
-	//echo utf8($result);
-	//exit();
+	$first = mb_substr($str,0,1,'big5');
+	$last = mb_substr($newname,1,mb_strlen($newname,'big5')-1,'big5');
+	$result = $first.$last;
 
 	return ($result);
 }
