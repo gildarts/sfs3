@@ -1,4 +1,24 @@
 <?php
+/*
+<select name="reward_kind" size="1" style="background-color:#FFFFFF;font-size:13px">
+<option value="">-- 選擇獎懲 --
+</option><option value="1">嘉獎一次</option>
+<option value="2">嘉獎二次</option>
+<option value="3">小功一次</option>
+<option value="4">小功二次</option>
+<option value="5">大功一次</option>
+<option value="6">大功二次</option>
+<option value="7">大功三次</option>
+<option value="-1">警告一次</option>
+<option value="-2">警告二次</option>
+<option value="-3">小過一次</option>
+<option value="-4">小過二次</option>
+<option value="-5">大過一次</option>
+<option value="-6">大過二次</option>
+<option value="-7">大過三次</option>
+</select>
+*/
+
 require_once '../config.php';
 
 //授權使用者，取得使用者資訊。
@@ -29,16 +49,15 @@ $curr_semester = sprintf ("%03s%s",$curr_year,$curr_seme); //101,2 -> 1012
 $class_id=$request->Condition->ClassID;//101_2_07_01
 
 $sql = "
-select school_class.class_id,stud_base.student_sn, stud_base.stud_name,stud_base.stud_id,stud_seme.seme_num,
-	stud_absent.year,stud_absent.semester,stud_absent.date,stud_absent.absent_kind,stud_absent.section,
-	CONCAT(school_class.c_year,school_class.c_name) class_name
-from stud_base join stud_seme on stud_base.student_sn = stud_seme.student_sn
-	join school_class on stud_seme.seme_year_seme = CONCAT(school_class.year,school_class.semester)
-		and stud_seme.seme_class = CONCAT(school_class.c_year,school_class.c_name)
-	join stud_absent on stud_absent.class_id = school_class.class_id 
-		and stud_absent.stud_id = stud_base.stud_id
-where stud_seme.seme_year_seme in ('$curr_semester') and school_class.class_id='$class_id' and school_class.enable=1
-order by school_class.class_sn,stud_seme.seme_num,stud_absent.date,stud_absent.section";
+select a.student_sn,d.class_id,c.seme_num,b.stud_name,
+	case when a.reward_kind>0 then '獎' else '懲' end Merit,reward_date,reward_reason,d.year,d.semester,
+	case a.reward_kind when 5 then 1 when -5 then 1 when 6 then 2 when -6 then 2 when 7 then 3 when -7 then 3 else 0 end,
+	case a.reward_kind when 3 then 1 when -3 then 1 when 4 then 2 when -4 then 2 else 0 end,
+	case a.reward_kind when 1 then 1 when -1 then 1 when 2 then 2 when -2 then 2 else 0 end from reward a 
+inner join stud_base b on a.student_sn=b.student_sn
+inner join stud_seme c on b.student_sn=c.student_sn and a.reward_year_seme=case when left(c.seme_year_seme,1)=0 then right(c.seme_year_seme,3) else c.seme_year_seme end
+inner join school_class d on concat(d.year,d.semester)=$curr_semester and concat(d.c_year,right(d.class_id,2))=c.seme_class 
+where d.enable=1 and (b.stud_study_cond=0 or b.stud_study_cond=5) and a.reward_year_seme=$curr_semester and d.class_id='$class_id'";
 
 $result = $ctx->Execute($sql);
 
