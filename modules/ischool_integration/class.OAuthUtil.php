@@ -1,15 +1,19 @@
 <?php
 
-require_once ('class.HTTP.php');
+require_once 'lib/class.Services_JSON.php';
+require_once 'class.HTTP.php';
 require 'config.php';
 
 class OAuthUtil {
+	private $json;
 	private $token_endpoint ="https://auth.ischool.com.tw/oauth/token.php" ;
 	private $userInfo_url = "https://auth.ischool.com.tw/services/me2.php";	    
 
 	public function GetAccessToken($code) {
-		global $callback_url,$client_id,$client_secret; //±q config.php ©wÄ³¡C
+		global $callback_url,$client_id,$client_secret; 
 
+		$this->json = new Services_JSON();
+		
 		$fields = array(
 			'grant_type'=>'authorization_code',
 			'code'=>$code,
@@ -27,7 +31,7 @@ class OAuthUtil {
 		//echo $result;
 
 		//parse token json string
-		$token = json_decode($result, true);
+		$token = $this->json->decode($result);
 
 		return $token;
 	}
@@ -36,7 +40,7 @@ class OAuthUtil {
 		$url = $this->userInfo_url ."?access_token=$access_token&token_type=bearer";	    
 
 		$res = HTTP::Get($url);  
-		$user = json_decode($res, true);
+		$user = $this->json->decode($res);
 		return $user;
 	}
 }

@@ -35,8 +35,6 @@ if(isset($_REQUEST['log_id'])){
 				exit();
 			 }
 		 }
-		 session_destroy();
-		 session_start(); 
 		 do_login_teacher($teacher_sn);
 		 header("location: ../index.php");
 	} else {
@@ -53,6 +51,8 @@ if(isset($_REQUEST['log_id'])){
 function get_role_string($role){
 	if($role =='teacher')
 		return "教師";
+	else if ($role == 'student')
+		return "學生";
 	else
 		trigger_error("狀態已經不正確，請重新執行。",E_USER_ERROR);
 }
