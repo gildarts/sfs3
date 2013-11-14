@@ -1,4 +1,5 @@
 <?php
+
 //這裡是 SFS 原登入流程的相關程式碼。
 
 function do_login_teacher($target_sn){ //sfs 原來的登入流程。
@@ -12,6 +13,9 @@ function do_login_teacher($target_sn){ //sfs 原來的登入流程。
 	if(list($teacher_id,$teacher_sn, $name , $login_pass) = $recordSet -> FetchRow()){
 		$who = "教師";//iconv("UTF-8","big5","教師");
 
+		// echo $teacher_id.'||'.$login_pass.'||'.$teacher_sn.'||'.$name;
+		// exit();
+
 		$_SESSION['session_log_id'] = $teacher_id;
 		$_SESSION['session_log_pass'] = $login_pass;
 		$_SESSION['session_tea_sn'] = $teacher_sn;
@@ -19,6 +23,9 @@ function do_login_teacher($target_sn){ //sfs 原來的登入流程。
 		$_SESSION['session_who'] = $who;
 		$_SESSION[$session_prob] = get_prob_power($teacher_sn,$who);
 
+		// echo $teacher_id."|".$login_pass."|".$teacher_sn."|".$name.$_SESSION[$session_prob];
+		// exit();
+		
 		//echo var_dump($_SESSION);
 		login_logger($teacher_sn,$who);
 

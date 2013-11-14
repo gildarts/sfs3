@@ -16,6 +16,8 @@ $session_prob_open="";
 $session_who="";
 $session_login_chk="";
 
+session_start(); 
+
 //啟用SESSION
 //session_destroy(); //先清掉先前的 Session。
 
@@ -43,12 +45,17 @@ if (isset($_GET['code'])) { //oauth code。
 	$code = $_GET['code'];  
 
 	$token = $oauth_util->GetAccessToken($code);
-
-	// var_dump($token);
-	// exit();
 	
+	if(isset($token->error)){
+		user_error($token->error_description,256);	
+	}
+
 	//========  2. Get User Info  ==================
 	$user = $oauth_util->GetUserInfo($token->access_token);
+
+	if(isset($user->error)){
+		user_error($user->error_description, 256);
+	}
 
 	$userID = $user->userID;
 	$userUUID = $user->uuid;
@@ -70,11 +77,12 @@ if (isset($_GET['code'])) { //oauth code。
 		//判斷該使用者是否存在
 		if(!$records -> EOF){ //exists
 			list($ref_target_sn,$uuid) = $records -> FetchRow();
+
 			do_login_teacher($ref_target_sn); //進入 SFS 原來認證流程。
+
 			header("location: ../index.php");
 		}else{
 			header("location: link_account.php");
-
 		}
 	}else{
 		echo "no role!";
