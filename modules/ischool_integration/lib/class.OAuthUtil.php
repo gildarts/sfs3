@@ -1,8 +1,8 @@
 <?php
 
-require_once 'lib/class.Services_JSON.php';
+require_once 'class.Services_JSON.php';
 require_once 'class.HTTP.php';
-require_once 'config.php';
+require_once '../config.php';
 
 class OAuthUtil {
 	private $json;

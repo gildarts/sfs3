@@ -5,7 +5,7 @@
 /* 取得設定檔 */
 include_once "bridge.php";
 
-sfs_check(); //SFS 的檢查是否有登入。
+//sfs_check(); //SFS 的檢查是否有登入。
 
 $r = rand(1,7);
 $l = rand(2,5);
@@ -18,5 +18,14 @@ while(!$result->EOF){
 
 	$result->FetchRow();
 }
+
+echo "
+ischool_userid:{$_SESSION['ischool_userid']}<br/>
+ischool_role:{$_SESSION['ischool_role']}<br/>
+ischool_uid:{$_SESSION['ischool_uid']}<br/>
+session_log_id:{$_SESSION['session_log_id']}<br/>
+session_tea_sn:{$_SESSION['session_tea_sn']}<br/>
+session_who:{$_SESSION['session_who']}<br/>
+";
 
 ?>

@@ -1,6 +1,6 @@
 <?php
 
-//Sql æŸ¥è©¢å¾Œå›žå‚³çš„å°è£é¡žåˆ¥ã€‚
+//Sql ¬d¸ß«á¦^¶Çªº«Ê¸ËÃþ§O¡C
 
 class QueryResultSet{
 	private $result;

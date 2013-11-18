@@ -7,14 +7,14 @@ function do_login_teacher($target_sn){ //sfs 原來的登入流程。
 
 	$session_prob = get_session_prot();
 
+	// 確定連線成立
+	if (!$CONN) user_error("資料庫連線不存在！請檢查相關設定！",256);
+
 	$sql_select = " select teach_id,teacher_sn,name, login_pass from teacher_base where teach_condition = 0 and teacher_sn = ?";
 	$recordSet = $CONN -> Execute($sql_select, array($target_sn)) or trigger_error("資料連結錯誤：" . $sql_select, E_USER_ERROR);
 
 	if(list($teacher_id,$teacher_sn, $name , $login_pass) = $recordSet -> FetchRow()){
 		$who = "教師";//iconv("UTF-8","big5","教師");
-
-		// echo $teacher_id.'||'.$login_pass.'||'.$teacher_sn.'||'.$name;
-		// exit();
 
 		$_SESSION['session_log_id'] = $teacher_id;
 		$_SESSION['session_log_pass'] = $login_pass;
@@ -31,6 +31,37 @@ function do_login_teacher($target_sn){ //sfs 原來的登入流程。
 
 		// 記錄使用者狀態
 		$query = "insert into pro_user_state (teacher_sn,pu_state,pu_time,pu_ip) values($teacher_sn,1,now(),'{$_SERVER['REMOTE_ADDR']}')";
+		$CONN -> Execute($query) or user_error("新增失敗！<br>$query",256);
+	} else {
+		trigger_error("整合登入發生問題！", E_USER_ERROR);
+	}
+}
+
+function do_login_student($target_sn){
+	global $CONN;
+
+	$session_prob = get_session_prot();
+
+	// 確定連線成立
+	if (!$CONN) user_error("資料庫連線不存在！請檢查相關設定！",256);
+
+	$sql_select = "select stud_id, student_sn,stud_name, email_pass from stud_base where student_sn='$target_sn' and stud_study_cond in (0,15) and stud_id <>''";
+	$recordSet = $CONN -> Execute($sql_select) or trigger_error("資料連結錯誤：" . $sql_select, E_USER_ERROR);
+
+	if(list($stud_id, $student_sn,$name,$email_pass) = $recordSet -> FetchRow()){
+		
+		$_SESSION['session_log_id'] = $stud_id;
+		$_SESSION['session_tea_sn'] = $student_sn;
+		$_SESSION['session_log_pass'] = $email_pass;
+		$_SESSION['session_tea_name'] = $name;
+		$_SESSION['session_who'] = "學生";
+		$_SESSION[$session_prob] = get_prob_power($student_sn,"學生");
+		var_dump(get_prob_power($student_sn,"學生"));
+
+		login_logger($teacher_sn,"學生");
+
+		// 記錄使用者狀態
+		$query = "insert into pro_user_state (teacher_sn,pu_state,pu_time,pu_ip) values($student_sn,1,now(),'{$_SERVER['REMOTE_ADDR']}')";
 		$CONN -> Execute($query) or user_error("新增失敗！<br>$query",256);
 	} else {
 		trigger_error("整合登入發生問題！", E_USER_ERROR);

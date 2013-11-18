@@ -9,6 +9,9 @@ function init_context($access_token){
 	ob_start();
 	output_headers();
 
+	if(!isset($access_token))
+		return;
+
 	$userinfo = getUserInfo($access_token);
 
 	if($userinfo['error'] != ''){

@@ -1,25 +1,27 @@
 <?php
 /*
-OAuth çš„ Callback é é¢ã€‚
-åƒæ•¸ä¸­æœƒå¸¶æœ‰ codeã€‚
+OAuth ªº Callback ­¶­±¡C
+°Ñ¼Æ¤¤·|±a¦³ code¡C
 */
-
 require_once "../sfs_login.php";
-require_once ("../class.OAuthUtil.php");
+require_once ("../lib/class.OAuthUtil.php");
+
+if(!is_module_installed())
+	user_error(('¥¼¦w¸Ë ischool_integration ¼Ò²Õ¡C'),256);
 
 session_start(); 
 
 $access_token = $_GET['token'];
 $role = $_GET['role'];
 
-if ($access_token) {
+if (isset($access_token)) {
 
 	$oauth_util = new OAuthUtil();
 
 	//========  2. Get User Info  ==================
 	//$access_token += $access_token.'hello';
 
-	$user = $oauth_util->GetUserInfo(&$access_token);
+	$user = $oauth_util->GetUserInfo($access_token);
 
 	if(isset($user->error)){
 		user_error($user->error_description, 256);
@@ -30,30 +32,41 @@ if ($access_token) {
 
 	$firstName=iconv("UTF-8","big5",$user->firstName);
 
-	//========  3. æª¢æŸ¥ table ä¸­æ˜¯å¦å·²æœ‰å¸³è™Ÿ  ===============
-	// ç¢ºå®šé€£ç·šæˆç«‹
-	if (!$CONN) user_error("è³‡æ–™åº«é€£ç·šä¸å­˜åœ¨ï¼è«‹æª¢æŸ¥ç›¸é—œè¨­å®šï¼",256);
+	//========  3. ÀË¬d table ¤¤¬O§_¤w¦³±b¸¹  ===============
+	// ½T©w³s½u¦¨¥ß
+	if (!$CONN) user_error("¸ê®Æ®w³s½u¤£¦s¦b¡I½ÐÀË¬d¬ÛÃö³]©w¡I",256);
 
-	if ($role == "teacher") {
-		$sql = "select ref_target_sn,uuid from ischool_account where account = ? and ref_target_role='teacher';";
-		$records = $CONN -> Execute($sql, array($userID)) or trigger_error("Sql Errorï¼š{$CONN->ErrorMsg()}", E_USER_ERROR);
+	if (!isset($role)) {
+		user_error(iconv("UTF-8","big5",'½Ð«ü©w¨¤¦â teacher¡Bstudent...'),256);
+	}
 
-		$_SESSION['ischool_userid'] = $userID;
-		$_SESSION['ischool_role'] = $role;
-		$_SESSION['ischool_useruuid'] = $userUUID;
+	$sql = "select ref_target_sn,uuid,uid from ischool_account where account = ? and ref_target_role='{$role}';";
+	$records = $CONN -> Execute($sql, array($userID)) or trigger_error("Sql Error¡G{$CONN->ErrorMsg()}", E_USER_ERROR);
 
-		//åˆ¤æ–·è©²ä½¿ç”¨è€…æ˜¯å¦å­˜åœ¨
-		if(!$records -> EOF){ //exists
-			list($ref_target_sn,$uuid) = $records -> FetchRow();
+	$_SESSION['ischool_userid'] = $userID;
+	$_SESSION['ischool_role'] = $role;
+	$_SESSION['ischool_useruuid'] = $userUUID;
 
-			do_login_teacher($ref_target_sn); //é€²å…¥ SFS åŽŸä¾†èªè­‰æµç¨‹ã€‚
+	//§PÂ_¸Ó¨Ï¥ÎªÌ¬O§_¦s¦b
+	if(!$records -> EOF){ //exists
+		list($ref_target_sn, $uuid, $uid) = $records -> FetchRow();
 
-			//å®Œæˆç™»å…¥ï¼
+		$_SESSION['ischool_uid'] = $uid;
+
+		if($role == 'teacher'){
+			do_login_teacher($ref_target_sn); //¶i¤J SFS ­ì¨Ó»{ÃÒ¬yµ{¡C
 		}
+		else if($role == 'student'){
+			do_login_student($ref_target_sn);
+		}else{
+			user_error(iconv("UTF-8","big5",'¤£¤ä´©¦¹¨¤¦â¡G{$role}'),256);
+		}
+
+		//§¹¦¨µn¤J¡I
 	}else{
-		user_error(iconv("UTF-8","big5",'è«‹æŒ‡å®šè§’è‰² teacherã€student...'),256);
+		user_error(iconv("UTF-8","big5","¨Ï¥ÎªÌ ¡u{$userID}¡v¦b¨¤¦â¡u{$role}¡v¤¤§ä¤£¨ì¡I"),256);	
 	}
 } else {
-	user_error(iconv("UTF-8","big5",'æœªæŒ‡å®š AccessTokenï¼Œç„¡æ³•èªè­‰ã€‚'),256);
+	user_error(iconv("UTF-8","big5",'¥¼«ü©w AccessToken¡AµLªk»{ÃÒ¡C'),256);
 }
 ?>
